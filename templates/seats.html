@@ -1,49 +1,74 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Select a Seat</title>
-</head>
-<body>
-    <h1>{{ movie.title }} — Select a Seat</h1>
+{% extends "base.html" %}
+{% block title %}{{ movie.title }} — Select a Seat{% endblock %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <p style="color: red;"><strong>{{ message }}</strong></p>
-        {% endfor %}
-    {% endwith %}
+{% block content %}
+<div class="seat-page">
+    <a href="{{ url_for('movies') }}" class="back-link">&larr; Back to films</a>
+    <div class="section-head">
+        <p class="kicker">{{ movie.genre }}</p>
+        <h2>{{ movie.title }}</h2>
+    </div>
 
-    <form action="/book" method="POST" novalidate>
+    <div class="screen-wrap">
+        <div class="screen"></div>
+        <div class="screen-label">Screen</div>
+    </div>
+
+    <div class="legend">
+        <span><span class="swatch free"></span> Available</span>
+        <span><span class="swatch sel"></span> Selected</span>
+        <span><span class="swatch taken"></span> Taken</span>
+    </div>
+
+    <form action="{{ url_for('book') }}" method="POST" novalidate>
         <input type="hidden" name="movie_id" value="{{ movie.id }}">
         <input type="hidden" name="seat_id" id="seat_id" value="">
 
-        {% for row, seat_list in rows.items() %}
-        <div>
-            <strong>Row {{ row }}:</strong>
-            {% for seat in seat_list %}
-                {% if seat.is_available %}
-                    <button type="button" onclick="selectSeat('{{ seat.id }}', this)">
-                        {{ seat.seat_row }}{{ seat.seat_number }}
-                    </button>
-                {% else %}
-                    <button disabled>X</button>
-                {% endif %}
+        <div class="seatmap">
+            {% for row, seat_list in rows.items() %}
+            <div class="seat-row" style="animation-delay: {{ loop.index0 * 0.06 }}s">
+                <span class="row-label">{{ row }}</span>
+                {% for seat in seat_list %}
+                    {% if seat.is_available %}
+                        <button type="button" class="seat"
+                                data-seat-id="{{ seat.id }}"
+                                data-seat-label="{{ seat.seat_row }}{{ seat.seat_number }}"
+                                onclick="selectSeat(this)">{{ seat.seat_number }}</button>
+                    {% else %}
+                        <button type="button" class="seat taken" disabled>&times;</button>
+                    {% endif %}
+                {% endfor %}
+            </div>
             {% endfor %}
         </div>
-        {% endfor %}
 
-        <br>
-        <p>Selected seat: <span id="selected_label">None</span></p>
-        <label>Name: <input type="text" name="customer_name"></label><br>
-        <label>Email: <input type="text" name="customer_email"></label><br>
-        <br>
-        <button type="submit">Confirm Booking</button>
+        <div class="booking">
+            <h3>Complete your booking</h3>
+            <p class="selected-readout">Selected seat: <b id="selected_label">none yet</b></p>
+
+            <div class="field">
+                <label for="customer_name">Full name</label>
+                <input type="text" id="customer_name" name="customer_name" placeholder="Jane Doe">
+            </div>
+            <div class="field">
+                <label for="customer_email">Email</label>
+                <input type="text" id="customer_email" name="customer_email" placeholder="jane@example.com">
+            </div>
+
+            <button type="submit" class="btn" id="confirm_btn" disabled>Confirm Booking</button>
+        </div>
     </form>
+</div>
 
-    <script>
-        function selectSeat(seatId, btn) {
-            document.getElementById('seat_id').value = seatId;
-            document.getElementById('selected_label').textContent = btn.textContent.trim();
-        }
-    </script>
-</body>
-</html>
+<script>
+    function selectSeat(btn) {
+        document.querySelectorAll('.seat.selected').forEach(function (s) {
+            s.classList.remove('selected');
+        });
+        btn.classList.add('selected');
+        document.getElementById('seat_id').value = btn.dataset.seatId;
+        document.getElementById('selected_label').textContent = btn.dataset.seatLabel;
+        document.getElementById('confirm_btn').disabled = false;
+    }
+</script>
+{% endblock %}

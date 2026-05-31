@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CineBook</title>
-</head>
-<body>
-    <h1>Welcome to CineBook</h1>
-    <p>Your cinema booking app.</p>
-    <a href="/movies">Browse Movies</a>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Lumière Cinema{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="kicker">A night at the pictures</p>
+    <h1>Where the<br><em>silver screen</em><br>comes alive</h1>
+    <p>Reserve your seat for tonight's feature. Hand-picked films, the best seats in the house, booked in seconds.</p>
+    <a href="{{ url_for('movies') }}" class="btn">Browse Now Showing &rarr;</a>
+</section>
+{% endblock %}

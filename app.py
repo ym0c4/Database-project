@@ -56,6 +56,14 @@ def book():
     name_pattern = re.compile(r"^[A-Za-z ]{2,50}$")
     email_pattern = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$")
 
+    if not movie_id or not movie_id.isdigit():
+        flash("Something went wrong. Please choose a movie and seat again.", "error")
+        return redirect(url_for("movies"))
+
+    if not seat_id or not seat_id.isdigit():
+        flash("Please select a seat before confirming your booking.", "error")
+        return redirect(url_for("seats", movie_id=movie_id))
+
     if not name_pattern.fullmatch(name):
         flash("Invalid name. Use letters only, 2-50 characters.", "error")
         return redirect(url_for("seats", movie_id=movie_id))
