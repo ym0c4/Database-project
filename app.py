@@ -1,4 +1,5 @@
 import os
+import re
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from flask import Flask, render_template, request, redirect, url_for, flash
@@ -51,6 +52,17 @@ def book():
     seat_id = request.form.get("seat_id")
     name = request.form.get("customer_name", "").strip()
     email = request.form.get("customer_email", "").strip()
+
+    name_pattern = re.compile(r"^[A-Za-z ]{2,50}$")
+    email_pattern = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$")
+
+    if not name_pattern.fullmatch(name):
+        flash("Invalid name. Use letters only, 2-50 characters.", "error")
+        return redirect(url_for("seats", movie_id=movie_id))
+
+    if not email_pattern.fullmatch(email):
+        flash("Invalid email address.", "error")
+        return redirect(url_for("seats", movie_id=movie_id))
 
     conn = get_db()
     cur = conn.cursor(cursor_factory=RealDictCursor)

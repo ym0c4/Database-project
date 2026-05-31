@@ -5,19 +5,23 @@
 </head>
 <body>
     <h1>{{ movie.title }} — Select a Seat</h1>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
-            <p>{{ message }}</p>
+            <p style="color: red;"><strong>{{ message }}</strong></p>
         {% endfor %}
     {% endwith %}
-    <form action="/book" method="POST">
+
+    <form action="/book" method="POST" novalidate>
         <input type="hidden" name="movie_id" value="{{ movie.id }}">
+        <input type="hidden" name="seat_id" id="seat_id" value="">
+
         {% for row, seat_list in rows.items() %}
         <div>
             <strong>Row {{ row }}:</strong>
             {% for seat in seat_list %}
                 {% if seat.is_available %}
-                    <button type="submit" name="seat_id" value="{{ seat.id }}">
+                    <button type="button" onclick="selectSeat('{{ seat.id }}', this)">
                         {{ seat.seat_row }}{{ seat.seat_number }}
                     </button>
                 {% else %}
@@ -26,9 +30,20 @@
             {% endfor %}
         </div>
         {% endfor %}
+
         <br>
-        <label>Name: <input type="text" name="customer_name" required></label><br>
-        <label>Email: <input type="email" name="customer_email" required></label><br>
+        <p>Selected seat: <span id="selected_label">None</span></p>
+        <label>Name: <input type="text" name="customer_name"></label><br>
+        <label>Email: <input type="text" name="customer_email"></label><br>
+        <br>
+        <button type="submit">Confirm Booking</button>
     </form>
+
+    <script>
+        function selectSeat(seatId, btn) {
+            document.getElementById('seat_id').value = seatId;
+            document.getElementById('selected_label').textContent = btn.textContent.trim();
+        }
+    </script>
 </body>
 </html>
