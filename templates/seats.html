@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select a Seat</title>
+</head>
+<body>
+    <h1>{{ movie.title }} — Select a Seat</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+    <form action="/book" method="POST">
+        <input type="hidden" name="movie_id" value="{{ movie.id }}">
+        {% for row, seat_list in rows.items() %}
+        <div>
+            <strong>Row {{ row }}:</strong>
+            {% for seat in seat_list %}
+                {% if seat.is_available %}
+                    <button type="submit" name="seat_id" value="{{ seat.id }}">
+                        {{ seat.seat_row }}{{ seat.seat_number }}
+                    </button>
+                {% else %}
+                    <button disabled>X</button>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <br>
+        <label>Name: <input type="text" name="customer_name" required></label><br>
+        <label>Email: <input type="email" name="customer_email" required></label><br>
+    </form>
+</body>
+</html>

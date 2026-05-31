@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movies</title>
+</head>
+<body>
+    <h1>Now Showing</h1>
+    {% for movie in movies %}
+    <div>
+        <h2>{{ movie.title }}</h2>
+        <p>{{ movie.genre }} | {{ movie.duration_minutes }} min | {{ movie.release_year }}</p>
+        <p>{{ movie.description }}</p>
+        <a href="/seats/{{ movie.id }}">Select Seats</a>
+    </div>
+    {% endfor %}
+</body>
+</html>
