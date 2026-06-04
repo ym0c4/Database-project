@@ -179,7 +179,7 @@ body::after {
 }
 .poster {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;

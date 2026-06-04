@@ -28,3 +28,30 @@ CREATE TABLE bookings (
     customer_email VARCHAR(255) NOT NULL,
     booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE VIEW movies_with_availability AS
+SELECT
+    m.id,
+    m.title,
+    m.genre,
+    m.duration_minutes,
+    m.description,
+    m.release_year,
+    COUNT(s.id) AS total_seats,
+    COUNT(s.id) FILTER (WHERE s.is_available) AS seats_available
+FROM movies m
+LEFT JOIN seats s ON s.movie_id = m.id
+GROUP BY m.id;
+
+CREATE OR REPLACE FUNCTION mark_seat_booked()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE seats SET is_available = FALSE WHERE id = NEW.seat_id;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_mark_seat_booked
+AFTER INSERT ON bookings
+FOR EACH ROW
+EXECUTE FUNCTION mark_seat_booked();

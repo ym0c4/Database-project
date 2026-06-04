@@ -11,8 +11,11 @@
 <div class="movies-grid">
     {% for movie in movies %}
     <article class="card">
-        <div class="poster">
+<div class="poster">
             <span class="tag">Now Showing</span>
+            <img class="poster-img" src="{{ url_for('static', filename='posters/' ~ movie.id ~ '.png') }}"
+                 alt="{{ movie.title }} poster"
+                 onerror="this.style.display='none'">
             <span class="initial">{{ movie.title[0] }}</span>
         </div>
         <div class="card-body">
